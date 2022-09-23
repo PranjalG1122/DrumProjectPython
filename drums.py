@@ -12,6 +12,7 @@ white = (255, 255, 255)
 gray = (128, 128, 128)
 dark_gray = (64, 64, 64)
 green = (0, 255, 0)
+red = (255, 0, 0)
 gold = (212, 715, 55)
 blue = (0, 255, 255)
 
@@ -115,6 +116,18 @@ while run:
     timer.tick(fps)
     screen.fill(black)
     boxes = draw_grid(clicked, active_beat)
+    # This is for the lower menu
+    play_pause_button = pygame.draw.rect(
+        screen, gray, [50, HEIGHT - 150, 200, 100], 0, 5)  # This is to create the play/pause button
+    play_text = label_font.render("Play/Pause", True, white)
+    screen.blit(play_text, (70, HEIGHT-130))
+    if playing:
+        play_text_2 = label_font.render(
+            "Playing", True, green)  # Renders if playing
+    else:
+        play_text_2 = label_font.render(
+            "Paused", True, red)   # Renders if paused
+    screen.blit(play_text_2, (70, HEIGHT-100))
     if beat_changed:
         play_notes()
         beat_changed = False
@@ -129,6 +142,13 @@ while run:
                     coords = boxes[i][1]
                     # This is to change the box from gray to green by changing initial clicked array by multiplying by -1
                     clicked[coords[1]][coords[0]] *= -1
+        if event.type == pygame.MOUSEBUTTONUP:
+            # This is to check if the play/pause button is clicked
+            if play_pause_button.collidepoint(event.pos):
+                if playing:
+                    playing = False
+                elif not playing:
+                    playing = True
 
     beat_length = 3600 // bpm
     if playing:
