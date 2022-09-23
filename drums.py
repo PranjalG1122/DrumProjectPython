@@ -27,7 +27,9 @@ timer = pygame.time.Clock()
 instruments = 6
 beats = 8
 boxes = []
+# This creates a positional array with all values as -1
 clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
+# in order to change the state, we multiply by -1
 bpm = 240
 playing = True
 active_length = 0  # Tells us how many beats we've played so far
@@ -36,6 +38,15 @@ beat_changed = True  # Tells us if our beats have changed
 
 # -----End-----
 
+# Loading in the sounds
+hi_hat = mixer.Sound("sounds\hi_hat.wav")
+snare = mixer.Sound("sounds\snare.wav")
+kick = mixer.Sound("sounds\kick.wav")
+crash = mixer.Sound("sounds\crash.wav")
+clap = mixer.Sound("sounds\clap.wav")
+floor_tom = mixer.Sound("sounds\\tom.wav")
+pygame.mixer.set_num_channels(instruments * 3)
+
 
 def draw_grid(clicks, beat):
     left_menu = pygame.draw.rect(screen, gray, [0, 0, 200, HEIGHT - 200], 5)
@@ -43,6 +54,7 @@ def draw_grid(clicks, beat):
         screen, dark_gray, [0, HEIGHT-200, WIDTH, 200], 5)
     boxes = []
     colors = [gray, white, gray]
+    # This is to render the left box menu
     hi_hat_text = label_font.render("Hi-Hat", True, white)
     screen.blit(hi_hat_text, (30, 30))
     snare_text = label_font.render("Snare", True, white)
@@ -62,20 +74,40 @@ def draw_grid(clicks, beat):
 
     for i in range(beats):
         for j in range(instruments):
-            if clicks[j][i] == -1:
+            if clicks[j][i] == -1:  # This is to check current position state
                 color = gray
             else:
                 color = green
+            # This rectangle is for the gray box
             rectangle = pygame.draw.rect(
                 screen, color, [(i * ((WIDTH - 200) // beats) + 205), (j * 100) + 5, ((WIDTH - 200) // beats) - 10, ((HEIGHT - 200) // instruments) - 10], 0, 3)
+            # This rectange is for the black outline of each box
             pygame.draw.rect(
                 screen, black, [(i * ((WIDTH - 200) // beats) + 200), (j * 100), ((WIDTH - 200) // beats), ((HEIGHT - 200) // instruments)], 5, 5)
             boxes.append(((rectangle), (i, j)))
 
+    # This displays the current beat as a aqua color
     beat_active = pygame.draw.rect(
         screen, blue, [beat * ((WIDTH - 200) // beats) + 200, 0, ((WIDTH - 200) // beats), instruments * 100], 5, 3)
 
     return boxes
+
+
+def play_notes():
+    for i in range(len(clicked)):
+        if clicked[i][active_beat] == 1:  # If the beat is active, we will play the sound
+            if i == 0:
+                hi_hat.play()
+            if i == 1:
+                crash.play()
+            if i == 2:
+                snare.play()
+            if i == 3:
+                clap.play()
+            if i == 4:
+                kick.play()
+            if i == 5:
+                floor_tom.play()
 
 
 run = True
@@ -83,19 +115,25 @@ while run:
     timer.tick(fps)
     screen.fill(black)
     boxes = draw_grid(clicked, active_beat)
+    if beat_changed:
+        play_notes()
+        beat_changed = False
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             for i in range(len(boxes)):
+                # This if statement is to check if the mouse pointer is colliding with the current box
                 if boxes[i][0].collidepoint(event.pos):
                     coords = boxes[i][1]
+                    # This is to change the box from gray to green by changing initial clicked array by multiplying by -1
                     clicked[coords[1]][coords[0]] *= -1
 
     beat_length = 3600 // bpm
     if playing:
-        if active_length < beat_length:
-            active_length += 1
+        if active_length < beat_length:  # This is to check if the beat has finished
+            active_length += 1           # Adds a beat
         else:
             active_length = 0
             if active_beat < beats - 1:
