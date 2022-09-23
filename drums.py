@@ -13,6 +13,7 @@ gray = (128, 128, 128)
 dark_gray = (64, 64, 64)
 green = (0, 255, 0)
 gold = (212, 715, 55)
+blue = (0, 255, 255)
 
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption("Beats Maker")
@@ -27,11 +28,16 @@ instruments = 6
 beats = 8
 boxes = []
 clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
+bpm = 240
+playing = True
+active_length = 0  # Tells us how many beats we've played so far
+active_beat = 0
+beat_changed = True  # Tells us if our beats have changed
 
 # -----End-----
 
 
-def draw_grid(clicks):
+def draw_grid(clicks, beat):
     left_menu = pygame.draw.rect(screen, gray, [0, 0, 200, HEIGHT - 200], 5)
     bottom_menu = pygame.draw.rect(
         screen, dark_gray, [0, HEIGHT-200, WIDTH, 200], 5)
@@ -66,6 +72,9 @@ def draw_grid(clicks):
                 screen, black, [(i * ((WIDTH - 200) // beats) + 200), (j * 100), ((WIDTH - 200) // beats), ((HEIGHT - 200) // instruments)], 5, 5)
             boxes.append(((rectangle), (i, j)))
 
+    beat_active = pygame.draw.rect(
+        screen, blue, [beat * ((WIDTH - 200) // beats) + 200, 0, ((WIDTH - 200) // beats), instruments * 100], 5, 3)
+
     return boxes
 
 
@@ -73,7 +82,7 @@ run = True
 while run:
     timer.tick(fps)
     screen.fill(black)
-    boxes = draw_grid(clicked)
+    boxes = draw_grid(clicked, active_beat)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -82,6 +91,19 @@ while run:
                 if boxes[i][0].collidepoint(event.pos):
                     coords = boxes[i][1]
                     clicked[coords[1]][coords[0]] *= -1
+
+    beat_length = 3600 // bpm
+    if playing:
+        if active_length < beat_length:
+            active_length += 1
+        else:
+            active_length = 0
+            if active_beat < beats - 1:
+                active_beat += 1
+                beat_changed = True
+            else:
+                active_beat = 0
+                beat_changed = True
 
     pygame.display.flip()
 
