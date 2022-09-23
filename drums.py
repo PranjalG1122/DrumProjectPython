@@ -19,6 +19,7 @@ blue = (0, 255, 255)
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption("Beats Maker")
 label_font = pygame.font.Font("Roboto-Bold.ttf", 32)
+medium_font = pygame.font.Font('Roboto-Bold.ttf', 24)
 
 # This is an area for defining variables that will be used later in the program
 # -----Start-----
@@ -128,6 +129,23 @@ while run:
         play_text_2 = label_font.render(
             "Paused", True, red)   # Renders if paused
     screen.blit(play_text_2, (70, HEIGHT-100))
+
+    # Beats Per Minute Display
+    bpm_rectangle = pygame.draw.rect(
+        screen, gray, [300, HEIGHT - 150, 200, 100], 5, 5)
+    bpm_text = medium_font.render("Beats Per Minute", True, white)
+    screen.blit(bpm_text, (308, HEIGHT-130))
+    bpm_text2 = label_font.render(f'{bpm}', True, white)
+    screen.blit(bpm_text2, (370, HEIGHT-100))
+
+    # BPM increment and decrement buttons
+    bpm_up = pygame.draw.rect(screen, green, [510, HEIGHT - 150, 48, 48], 0, 5)
+    bpm_down = pygame.draw.rect(screen, red, [510, HEIGHT - 100, 48, 48], 0, 5)
+    increment_text = medium_font.render("+", True, white)
+    screen.blit(increment_text, (528, HEIGHT-140))
+    decrement_text = medium_font.render("-", True, white)
+    screen.blit(decrement_text, (528, HEIGHT-90))
+
     if beat_changed:
         play_notes()
         beat_changed = False
@@ -149,6 +167,10 @@ while run:
                     playing = False
                 elif not playing:
                     playing = True
+            elif bpm_up.collidepoint(event.pos):
+                bpm += 5
+            elif bpm_down.collidepoint(event.pos):
+                bpm -= 5
 
     beat_length = 3600 // bpm
     if playing:
