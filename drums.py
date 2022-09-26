@@ -146,6 +146,30 @@ while run:
     decrement_text = medium_font.render("-", True, white)
     screen.blit(decrement_text, (528, HEIGHT-90))
 
+    # Beats Display
+    beats_rectangle = pygame.draw.rect(
+        screen, gray, [600, HEIGHT - 150, 200, 100], 5, 5)
+    beats_text = medium_font.render("Beats in loop", True, white)
+    screen.blit(beats_text, (628, HEIGHT-130))
+    beats_text2 = label_font.render(f'{beats}', True, white)
+    screen.blit(beats_text2, (670, HEIGHT-100))
+
+    # Beats increment and decrement buttons
+    beats_up = pygame.draw.rect(
+        screen, green, [810, HEIGHT - 150, 48, 48], 0, 5)
+    beats_down = pygame.draw.rect(
+        screen, red, [810, HEIGHT - 100, 48, 48], 0, 5)
+    increment_text_beats = medium_font.render("+", True, white)
+    screen.blit(increment_text_beats, (828, HEIGHT-140))
+    decrement_text_beats = medium_font.render("-", True, white)
+    screen.blit(decrement_text_beats, (828, HEIGHT-90))
+
+    # Insrumens On/Off displa
+    instrument_rects = []
+    for i in range(instruments):
+        rect = pygame.rect.Rect((0, i * 100), (200, 100))
+        instrument_rects.append(rect)
+
     if beat_changed:
         play_notes()
         beat_changed = False
@@ -171,6 +195,14 @@ while run:
                 bpm += 5
             elif bpm_down.collidepoint(event.pos):
                 bpm -= 5
+            elif beats_up.collidepoint(event.pos):
+                beats += 1
+                for i in range(len(clicked)):
+                    clicked[i].append(-1)
+            elif beats_down.collidepoint(event.pos):
+                beats -= 1
+                for i in range(len(clicked)):
+                    clicked[i].pop(-1)
 
     beat_length = 3600 // bpm
     if playing:
