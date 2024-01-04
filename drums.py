@@ -234,4 +234,6 @@ while run:
 
     pygame.display.flip()
 
+#  Quits game
+
 pygame.quit()
