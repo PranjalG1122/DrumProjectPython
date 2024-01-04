@@ -43,12 +43,12 @@ beat_changed = True  # Tells us if our beats have changed
 # -----End-----
 
 # Loading in the sounds
-hi_hat = mixer.Sound("sounds\hi_hat.wav")
-snare = mixer.Sound("sounds\snare.wav")
-kick = mixer.Sound("sounds\kick.wav")
-crash = mixer.Sound("sounds\crash.wav")
-clap = mixer.Sound("sounds\clap.wav")
-floor_tom = mixer.Sound("sounds\\tom.wav")
+hi_hat = mixer.Sound("sounds/hi_hat.WAV")
+snare = mixer.Sound("sounds/snare.WAV")
+kick = mixer.Sound("sounds/kick.WAV")
+crash = mixer.Sound("sounds/crash.WAV")
+clap = mixer.Sound("sounds/clap.WAV")
+floor_tom = mixer.Sound("sounds//tom.WAV")
 pygame.mixer.set_num_channels(instruments * 3)
 
 
